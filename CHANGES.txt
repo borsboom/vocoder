@@ -1,0 +1,45 @@
+$Id: CHANGES.txt,v 1.4 1999/03/16 06:56:14 emanuel Exp $
+
+-------------------
+1.0 (December 1996)
+-------------------
+
+Official release.  Works flawlessly (yeah, right).
+
+--------------------
+1.0.1 (January 1997)
+--------------------
+
+Minor changes to fft/error.c to allow to make definitions of emalloc() and
+ecalloc() agree with the prototyes.
+
+Updated the README to reflect the existance of a MacOS version (which is
+a bit different from the others).
+
+----------------
+1.1b1 (July 1998)
+----------------
+
+Mostly re-written.
+
+Support for AIFF files.
+
+Dramatic reduction in memory use.  Amount of memory used is now proportional
+to the window length instead of the size of the input files.
+
+Improved quality.  S's and T's come out much more clearly.
+Chanks to Tero Karras <tkarras@ksilta.edu.ouka.fi> for the tip!
+
+Intelligent defaults for most of the command-line arguments.
+
+The Java version has been discontinued.
+
+-------------------
+1.2 (March 1999)
+-------------------
+
+If no command-line arguments are passed, it will ask the user for the
+values of all the parameters.
+
+A small off-by-one error has been fixed.  Thanks to Matthew Frank Toews
+<mtoews@interchange.ubc.ca> for pointing it out to me.
