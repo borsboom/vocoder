@@ -1,4 +1,4 @@
-$Id: CHANGES.txt,v 1.4 1999/03/16 06:56:14 emanuel Exp $
+$Id: CHANGES.txt,v 1.6 2002/09/20 02:30:51 emanuel Exp $
 
 -------------------
 1.0 (December 1996)
@@ -43,3 +43,9 @@ values of all the parameters.
 
 A small off-by-one error has been fixed.  Thanks to Matthew Frank Toews
 <mtoews@interchange.ubc.ca> for pointing it out to me.
+
+-------------------
+1.3 (September 2002)
+-------------------
+
+Added GUI version for Win32.

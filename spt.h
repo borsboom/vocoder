@@ -1,4 +1,4 @@
-/* $Id: spt.h,v 1.2 1998/09/13 00:21:18 emanuel Exp $ */
+/* $Id: spt.h,v 1.4 2002/09/20 02:30:51 emanuel Exp $ */
 
 #ifndef _SPT_
 #define _SPT_
@@ -31,8 +31,12 @@
 #endif /* PI */
 #define ZERO_C		273.15
 
+#ifndef max //EKB
 #define max(a, b)	(((a) > (b)) ? (a) : (b))
+#endif
+#ifndef min //EKB
 #define min(a, b)	(((a) > (b)) ? (b) : (a))
+#endif
 #define abs(a)		(((a) < 0) ? (-(a)) : (a))
 #define sgn(x)		(((x) < 0) ? (-1) : (1))
 #define round(x)	(sgn(x)*(int)abs((x) + .5))

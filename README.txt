@@ -1,14 +1,17 @@
-$Id: README.txt,v 1.5 1999/03/16 06:56:14 emanuel Exp $
+$Id: README.txt,v 1.8 2002/09/20 02:30:51 emanuel Exp $
 
 ========================================================================
-Zerius Vocoder 1.2 README
+Zerius Vocoder 1.3 README
 ------------------------------------------------------------------------
-Emanuel Borsboom <emanuel@zerius.com> March 1999
+Emanuel Borsboom <em@nuel.ca> September 2002
 ========================================================================
 
 This program is used to make speech sound cool.  It imposes the vocal
 effects of speech onto another sound.  This technique has been made
 popular by artists such as Kraftwerk and Laurie Anderson.
+
+Note: This manual applies only to the command-line version.  If you are
+using the GUI version, see the help file that is included with it.
 
 ------------
 Installation
@@ -163,19 +166,17 @@ Closing Comments
 
 Please see the web site at
 
-        http://zerius.com/vocoder/
+        http://www.nuel.ca/Vocoder
 
 for the latest information.  The latest version will always be
-available from there, or from the FTP site at
-
-        ftp://ftp.zerius.com/pub/zerius/vocoder/
+available from there.
 
 If you have any problems, don't hesitate to contact me.  I am always
 pleased to help.  Also, drop me a line if like this program, or have
 any suggestions.  I am especially eager to hear your creations.  If
 you release some music utilizing the vocoder, please tell me so I can
 try to find it (freebies are always accepted)!  My e-mail address is
-emanuel@zerius.com.
+em@nuel.ca.
 
 Chanks to Cody Jones <cody@zerius.com> for porting to MacOS.
 
@@ -185,7 +186,7 @@ I appreciate any bug reports.
 Copyright
 ---------
 
-The Zerius Vocoder is Copyright (C) 1996-1998 Emanuel Borsboom.
+The Zerius Vocoder is Copyright (C) 1996-1999, 2002 Emanuel Borsboom.
 
 The FFT code (contained in fftn.c, fftaux.c, fft.h, and spt.h) is
 Copyright (C) 1993 Steven Trainoff.

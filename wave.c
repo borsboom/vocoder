@@ -1,6 +1,6 @@
 /******************************************************************************
- * $Id: wave.c,v 1.2 1998/09/13 00:21:18 emanuel Exp $
- * Copyright (C) 1998 Emanuel Borsboom <emanuel@zerius.com>
+ * $Id: wave.c,v 1.4 2002/09/20 02:30:51 emanuel Exp $
+ * Copyright (C) 1998,2002 Emanuel Borsboom <em@nuel.ca>
  * Permission is granted to make any use of this code subject to the condition
  * that all copies contain this notice and an indication of what has been
  * changed.
@@ -9,7 +9,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <sys/errno.h>
+#include <errno.h>
 #include "config.h"
 #include "wave.h"
 #include "extended.h"
@@ -57,7 +57,7 @@ WAVE_FILE *wave_open(char *filename, WAVE_INFO *info)
   }
 
   fclose(fp);
-  error("wave_open %s: unknown format", filename);
+  error_display("wave_open %s: unknown format", filename);
   return NULL;
 }
 
@@ -99,13 +99,13 @@ WAVE_FILE *wave_create(char *filename, WAVE_INFO *info)
   return file;
 }
 
-void wave_seek(WAVE_FILE *file, INT position)
+void wave_seek(WAVE_FILE *file, VINT position)
 {
   if (file->open_mode == WAVE_WRITE_MODE)
-    error("wave_seek: seek only supported for files opened in read mode");
+    error_display("wave_seek: seek only supported for files opened in read mode");
 
   if (position > file->length)
-    error("wave_seek: attempting to position out of file");
+    error_display("wave_seek: attempting to position out of file");
 
   fseek(file->fp, file->data_offset + position * ((file->bits + 7) / 8),
         SEEK_SET);
@@ -127,36 +127,36 @@ size_t wave_read(WAVE_FILE *file, SAMPLE *buffer, size_t length)
   if (feof(file->fp))
     return 0;
 
-  if (file->length - file->position < length)
+  if ((size_t)(file->length - file->position) < length)
     length = file->length - file->position;
 
   if (file->bits == 8)
     {
       for (count = 0; count < length; ++count)
-        buffer[count] = (BYTE)(getc(file->fp) - file->sample_offset);
+        buffer[count] = (VBYTE)(getc(file->fp) - file->sample_offset);
     }
   else if (file->bits == 16)
     { 
       if (file->is_big_endian)
         {
           for (count = 0; count < length; ++count)
-            buffer[count] = (SHORT)(wave_read_short_big(file->fp)
+            buffer[count] = (VSHORT)(wave_read_short_big(file->fp)
                                     - file->sample_offset);
         }
       else
         {
           for (count = 0; count < length; ++count)
-            buffer[count] = (SHORT)(wave_read_short_little(file->fp)
+            buffer[count] = (VSHORT)(wave_read_short_little(file->fp)
                                     - file->sample_offset);
         }
     }
   else
     {
-      error("wave_read: only 8-bit and 16-bit audio supported");
+      error_display("wave_read: only 8-bit and 16-bit audio supported");
     }
 
   if (ferror(file->fp))
-    error("wave_read: read error: %s", strerror(errno));
+    error_display("wave_read: read error: %s", strerror(errno));
 
   file->position += count;
   return count;
@@ -186,24 +186,24 @@ void wave_write(WAVE_FILE *file, SAMPLE *buffer, size_t length)
     }
   else
     {
-      error("wave_write: only 8-bit and 16-bit audio supported");
+      error_display("wave_write: only 8-bit and 16-bit audio supported");
     }
 
   if (ferror(file->fp))
-    error("wave_write: write error: %s", strerror(errno));
+    error_display("wave_write: write error: %s", strerror(errno));
 
   file->length += count;
   file->position += count;
 }
 
-INT wave_read_int_big(FILE *fp)
+VINT wave_read_int_big(FILE *fp)
 {
   int a, b, c, d;
   a = getc(fp); b = getc(fp); c = getc(fp); d = getc(fp);
   return (a << 24) | (b << 16) | (c << 8) | d;
 }
 
-void wave_write_int_big(INT i, FILE *fp)
+void wave_write_int_big(VINT i, FILE *fp)
 {
   int a, b, c, d;
   a = (i >> 24) & 0xff;
@@ -213,14 +213,14 @@ void wave_write_int_big(INT i, FILE *fp)
   putc(a, fp); putc(b, fp); putc(c, fp); putc(d, fp);
 }
 
-INT wave_read_int_little(FILE *fp)
+VINT wave_read_int_little(FILE *fp)
 {
   int a, b, c, d;
   a = getc(fp); b = getc(fp); c = getc(fp); d = getc(fp);
   return (d << 24) | (c << 16) | (b << 8) | a;
 }
 
-void wave_write_int_little(INT i, FILE *fp)
+void wave_write_int_little(VINT i, FILE *fp)
 {
   int a, b, c, d;
   a = (i >> 24) & 0xff;
@@ -230,14 +230,14 @@ void wave_write_int_little(INT i, FILE *fp)
   putc(d, fp); putc(c, fp); putc(b, fp); putc(a, fp);
 }
 
-SHORT wave_read_short_big(FILE *fp)
+VSHORT wave_read_short_big(FILE *fp)
 {
   int a, b;
   a = getc(fp); b = getc(fp);
   return (a << 8) | b;
 }
 
-void wave_write_short_big(SHORT i, FILE *fp)
+void wave_write_short_big(VSHORT i, FILE *fp)
 {
   int a, b;
   a = (i >> 8) & 0xff;
@@ -245,14 +245,14 @@ void wave_write_short_big(SHORT i, FILE *fp)
   putc(a, fp); putc(b, fp);
 }
 
-SHORT wave_read_short_little(FILE *fp)
+VSHORT wave_read_short_little(FILE *fp)
 {
   int a, b;
   a = getc(fp); b = getc(fp);
   return (b << 8) | a;
 }
 
-void wave_write_short_little(SHORT i, FILE *fp)
+void wave_write_short_little(VSHORT i, FILE *fp)
 {
   int a, b;
   a = (i >> 8) & 0xff;
@@ -260,14 +260,14 @@ void wave_write_short_little(SHORT i, FILE *fp)
   putc(b, fp); putc(a, fp);
 }
 
-REAL wave_read_extended(FILE *fp)
+VREAL wave_read_extended(FILE *fp)
 {
   unsigned char bytes[10];
   fread(bytes, 10, 1, fp);
   return ConvertFromIeeeExtended(bytes);
 }
 
-void wave_write_extended(REAL e, FILE *fp)
+void wave_write_extended(VREAL e, FILE *fp)
 {
   unsigned char bytes[10];
   ConvertToIeeeExtended(e, bytes);

@@ -1,13 +1,13 @@
-# $Id: Makefile,v 1.2 1998/09/13 00:21:18 emanuel Exp $
+# $Id: Makefile,v 1.4 2002/09/19 15:48:28 emanuel Exp $
 
 CFLAGS = -O
 LDFLAGS =
 LIBS = -lm
 
-SRCS = main.c error.c \
+SRCS = main.c vocode.c error.c \
        wave.c aiff.c riff.c extended.c \
        fftn.c fftaux.c
-OBJS = main.o error.o \
+OBJS = main.o vocode.o error.o \
        wave.o aiff.o riff.o extended.o \
        fftn.o fftaux.o
 OUT = vocoder

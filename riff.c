@@ -1,12 +1,15 @@
 /******************************************************************************
- * $Id: riff.c,v 1.2 1998/09/13 00:21:18 emanuel Exp $
- * Copyright (C) 1996-1998 Emanuel Borsboom <emanuel@zerius.com>
+ * $Id: riff.c,v 1.5 2002/09/20 02:30:51 emanuel Exp $
+ * Copyright (C) 1996-1998,2002 Emanuel Borsboom <em@nuel.ca>
  * Permission is granted to make any use of this code subject to the condition
  * that all copies contain this notice and an indication of what has been
  * changed.
  *****************************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
 #include "config.h"
 #include "error.h"
 #include "wave.h"
@@ -15,12 +18,12 @@
 WAVE_FILE *riff_open(FILE *fp, WAVE_INFO *info)
 {
   char file_id[5], form_type[5];
-  INT file_data_size, file_position;
-  SHORT format_tag = 0, channels = 0, block_align, bits_per_sample = 0;
-  INT samples_per_sec = 0, avg_bytes_per_sec;
-  INT data_size = 0, length;
+  VINT file_data_size, file_position;
+  VSHORT format_tag = 0, channels = 0, block_align, bits_per_sample = 0;
+  VINT samples_per_sec = 0, avg_bytes_per_sec;
+  VINT data_size = 0, length;
   long data_offset = 0;
-  BOOL got_format_chunk = FALSE, got_data_chunk = FALSE;
+  VBOOL got_format_chunk = FALSE, got_data_chunk = FALSE;
   WAVE_FILE *file;
   
   fread(file_id, 4, 1, fp);
@@ -39,14 +42,14 @@ WAVE_FILE *riff_open(FILE *fp, WAVE_INFO *info)
   while (file_position < file_data_size)
     {
       char chunk_id[5];
-      INT chunk_data_size;
+      VINT chunk_data_size;
 
       if (fread(chunk_id, 4, 1, fp) < 1)
         {
           if (feof(fp))
-            error("riff_open: bad format: EOF encountered where chunk expected");
+            error_display("riff_open: bad format: EOF encountered where chunk expected");
           else if (ferror(fp))
-            error("riff_open: bad format: error encountered where chunk expected: %s",
+            error_display("riff_open: bad format: error encountered where chunk expected: %s",
                   strerror(errno));
         }
       chunk_id[4] = '\0';
@@ -80,11 +83,11 @@ WAVE_FILE *riff_open(FILE *fp, WAVE_INFO *info)
     }
 
   if (!got_format_chunk)
-    error("riff_open: bad format: format chunk not found");
+    error_display("riff_open: bad format: format chunk not found");
   if (!got_data_chunk)
-    error("riff_open: bad format: data chunk not found");
+    error_display("riff_open: bad format: data chunk not found");
   if (format_tag != 1)
-    error("riff_open: bad format: only PCM data is supported");
+    error_display("riff_open: bad format: only PCM data is supported");
 
   length = data_size / ((bits_per_sample + 7) / 8);
 
@@ -95,8 +98,8 @@ WAVE_FILE *riff_open(FILE *fp, WAVE_INFO *info)
   file->sample_offset = (bits_per_sample <= 8) ? 128 : 0;
 
   info->rate = samples_per_sec;
-  info->bits = bits_per_sample;
-  info->channels = channels;
+  info->bits = (VBYTE)bits_per_sample;
+  info->channels = (VBYTE)channels;
   info->length = length;
 
   return file;

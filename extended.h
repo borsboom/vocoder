@@ -1,4 +1,4 @@
-/* $Id: extended.h,v 1.2 1998/09/13 00:21:18 emanuel Exp $ */
+/* $Id: extended.h,v 1.4 2002/09/20 02:30:51 emanuel Exp $ */
 
 #ifndef EXTENDED_H_INCLUDED
 #define EXTENDED_H_INCLUDED

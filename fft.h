@@ -1,4 +1,4 @@
-/* $Id: fft.h,v 1.2 1998/09/13 00:21:18 emanuel Exp $ */
+/* $Id: fft.h,v 1.4 2002/09/20 02:30:51 emanuel Exp $ */
 
 /* (C) Copyright 1993 by Steven Trainoff.  Permission is granted to make
 * any use of this code subject to the condition that all copies contain

@@ -1,6 +1,6 @@
 /******************************************************************************
- * $Id: aiff.c,v 1.2 1998/09/13 00:21:18 emanuel Exp $
- * Copyright (C) 1998 Emanuel Borsboom <emanuel@zerius.com>
+ * $Id: aiff.c,v 1.4 2002/09/20 02:30:51 emanuel Exp $
+ * Copyright (C) 1998,2002 Emanuel Borsboom <em@nuel.ca>
  * Permission is granted to make any use of this code subject to the condition
  * that all copies contain this notice and an indication of what has been
  * changed.
@@ -8,7 +8,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <sys/errno.h>
+#include <errno.h>
 #include "config.h"
 #include "error.h"
 #include "aiff.h"
@@ -16,20 +16,20 @@
 WAVE_FILE *aiff_open(FILE *fp, WAVE_INFO *info)
 {
   char file_id[5], form_type[5];
-  INT file_data_size, file_position;
+  VINT file_data_size, file_position;
   WAVE_FILE *file;
-  BOOL is_aifc;
+  VBOOL is_aifc;
 
   /* common chunk */
-  BOOL got_common_chunk = FALSE;
-  SHORT num_channels = 0, sample_size = 0;
+  VBOOL got_common_chunk = FALSE;
+  VSHORT num_channels = 0, sample_size = 0;
   char compression_type[5];
-  UINT num_sample_frames = 0;
-  REAL sample_rate = 0;
+  VUINT num_sample_frames = 0;
+  VREAL sample_rate = 0;
 
   /* sound data chunk */
-  UINT offset, block_size;
-  BOOL got_sound_data_chunk = FALSE;
+  VUINT offset, block_size;
+  VBOOL got_sound_data_chunk = FALSE;
   long sound_data_offset = 0;
 
   fread(file_id, 4, 1, fp);
@@ -49,13 +49,13 @@ WAVE_FILE *aiff_open(FILE *fp, WAVE_INFO *info)
   while (file_position < file_data_size)
     {
       char chunk_id[5];
-      INT chunk_data_size;
+      VINT chunk_data_size;
 
       if (fread(chunk_id, 4, 1, fp) < 1) {
         if (feof(fp))
-          error("aiff_open: bad format: EOF encountered where chunk expected");
+          error_display("aiff_open: bad format: EOF encountered where chunk expected");
         else if (ferror(fp))
-          error("aiff_open: bad format: error encountered where chunk expected: %s",
+          error_display("aiff_open: bad format: error encountered where chunk expected: %s",
                   strerror(errno));
       }
       chunk_id[4] = '\0';
@@ -72,7 +72,7 @@ WAVE_FILE *aiff_open(FILE *fp, WAVE_INFO *info)
           if (is_aifc) {
             fread(compression_type, 4, 1, fp);
             if (feof(fp))
-              error("aiff_open: bad format: EOF encountered in common chunk");
+              error_display("aiff_open: bad format: EOF encountered in common chunk");
             compression_type[4] = '\0';
           } else {
             strcpy(compression_type, "NONE");
@@ -93,13 +93,13 @@ WAVE_FILE *aiff_open(FILE *fp, WAVE_INFO *info)
     }
 
   if (!got_common_chunk)
-    error("aiff_open: bad format: did not find common chunk");
+    error_display("aiff_open: bad format: did not find common chunk");
   
   if (!got_sound_data_chunk)
-    error("aiff_open: bad format: did not find sound data chunk");
+    error_display("aiff_open: bad format: did not find sound data chunk");
 
   if (strcmp(compression_type, "NONE") != 0)
-    error("aiff_open: bad format: compressed AIFF-C files not supported");
+    error_display("aiff_open: bad format: compressed AIFF-C files not supported");
 
   fseek(fp, sound_data_offset, SEEK_SET);
 
@@ -107,9 +107,9 @@ WAVE_FILE *aiff_open(FILE *fp, WAVE_INFO *info)
   file->is_big_endian = 1;
   file->sample_offset = 0;
 
-  info->rate = sample_rate;
-  info->bits = sample_size;
-  info->channels = num_channels;
+  info->rate = (VINT)sample_rate;
+  info->bits = (VBYTE)sample_size;
+  info->channels = (VBYTE)num_channels;
   info->length = num_sample_frames;
 
   return file;
@@ -117,7 +117,7 @@ WAVE_FILE *aiff_open(FILE *fp, WAVE_INFO *info)
 
 WAVE_FILE *aiff_create(FILE *fp, WAVE_INFO *info)
 {
-  BYTE bytes_per_sample;
+  VBYTE bytes_per_sample;
   WAVE_FILE *file;
 
   bytes_per_sample = (info->bits + 7) / 8;

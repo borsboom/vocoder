@@ -1,4 +1,4 @@
-/* $Id: fftaux.c,v 1.2 1998/09/13 00:21:18 emanuel Exp $ */
+/* $Id: fftaux.c,v 1.4 2002/09/20 02:30:51 emanuel Exp $ */
 
 #include "fft.h"
 
